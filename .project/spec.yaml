@@ -209,9 +209,10 @@ execution:
   - name: Code Walkthrough
     type: custom
     class: webapp
-    start_command: cd /project/code/walkthrough && python -m http.server 8000
-    health_check_command: curl localhost:8000 > /dev/null
-    stop_command: PORT=8000 && PID=$(lsof -ti :$PORT) && kill $PID
+    start_command: cd /project/code/walkthrough && python -m http.server --directory
+      /project/code/walkthrough
+    health_check_command: curl -f "http://localhost:8000/"
+    stop_command: pkill -f "^python -m http.server --directory /project/code/walkthrough"
     user_msg: ""
     logfile_path: ""
     timeout_seconds: 60
@@ -220,7 +221,7 @@ execution:
       autolaunch: true
       port: "8000"
       proxy:
-        trim_prefix: false
+        trim_prefix: true
       url: http://localhost:8000/
   resources:
     gpu:
